@@ -131,14 +131,12 @@
     const R = mkRng(777);
     
     // 1. Trunk
-    const TRUNK_PTS = isMobileInit ? 
-      [[706, 3500], [731, 2800], [710, 2200], [729, 1600], [706, 900], [720, 300]] :
-      [[706,1700], [731,1450], [710,1100], [729,750], [706,400], [720,100]];
+    const TRUNK_PTS = [[706,1700], [731,1450], [710,1100], [729,750], [706,400], [720,100]];
     const trunkBase = getCurvePoints(TRUNK_PTS, 30);
     
     for(let i=0; i<80; i++) {
       const n = i / 79, c = 1 - Math.abs(n - 0.5)*2; 
-      const offset = isMobileInit ? (-45 + 90 * n) : (-65 + 130 * n);
+      const offset = -65 + 130 * n;
       const pts = weave(trunkBase, offset, 2 + R()*4, 15 + R()*15, R()*Math.PI*2, "trunk");
       
       const path = createSvgEl("path", {
@@ -152,22 +150,14 @@
     }
 
     // 2. Roots
-    const ROOT_DEFS = isMobileInit ? [
-      {p: [[645, 3500], [600, 3700], [550, 3850], [530, 4000]], s: 0.0, e: 0.35, prod: 0},
-      {p: [[706, 3500], [706, 3700], [715, 3850], [720, 4000]], s: 0.0, e: 0.35, prod: 1},
-      {p: [[767, 3500], [800, 3700], [870, 3850], [910, 4000]], s: 0.0, e: 0.35, prod: 2},
-      {p: [[670, 3500], [640, 3700], [570, 3950]], s: 0.0, e: 0.35},
-      {p: [[740, 3500], [770, 3700], [850, 3950]], s: 0.0, e: 0.35},
-      {p: [[620, 3500], [560, 3800], [500, 3950]], s: 0.05, e: 0.4},
-      {p: [[790, 3500], [840, 3800], [940, 3950]], s: 0.05, e: 0.4}
-    ] : [
-      {p: [[645,1700], [580,1850], [480,2000], [420,2250]], s: 0.0, e: 0.35, prod: 0},
-      {p: [[706,1700], [706,1900], [715,2100], [720,2250]], s: 0.0, e: 0.35, prod: 1},
-      {p: [[767,1700], [830,1850], [950,2000], [1020,2250]], s: 0.0, e: 0.35, prod: 2},
-      {p: [[670,1700], [630,1850], [530,2050]], s: 0.0, e: 0.35},
-      {p: [[740,1700], [790,1850], [900,2050]], s: 0.0, e: 0.35},
-      {p: [[620,1700], [530,1900], [450,2100]], s: 0.05, e: 0.4},
-      {p: [[790,1700], [880,1900], [1000,2100]], s: 0.05, e: 0.4}
+    const ROOT_DEFS = [
+      {p: [[645, 1700], [580, 1850], [480, 2000], [420, 2250]], s: 0.0, e: 0.35, prod: 0},
+      {p: [[706, 1700], [706, 1900], [715, 2100], [720, 2250]], s: 0.0, e: 0.35, prod: 1},
+      {p: [[767, 1700], [830, 1850], [950, 2000], [1020, 2250]], s: 0.0, e: 0.35, prod: 2},
+      {p: [[670, 1700], [630, 1850], [530, 2050]], s: 0.0, e: 0.35},
+      {p: [[740, 1700], [790, 1850], [900, 2050]], s: 0.0, e: 0.35},
+      {p: [[620, 1700], [530, 1900], [450, 2100]], s: 0.05, e: 0.4},
+      {p: [[790, 1700], [880, 1900], [1000, 2100]], s: 0.05, e: 0.4},
     ];
     ROOT_DEFS.forEach((rd) => {
       const rootBase = getCurvePoints(rd.p, 25);
@@ -195,8 +185,8 @@
       const baseP = trunkBase[Math.floor(trunkT * (trunkBase.length-1))];
       const dir = (i % 2 === 0) ? 1 : -1;
       
-      const length = isMobileInit ? (100 + R()*200 + (1-tBranch)*100) : (150 + R()*300 + (1-tBranch)*150);
-      const drop = isMobileInit ? (-150 + tBranch * 300 + R()*100) : (-100 + tBranch * 250 + R()*100);
+      const length = 150 + R()*300 + (1-tBranch)*150;
+      const drop = -100 + tBranch * 250 + R()*100;
       
       const bPts = [
         [baseP.x, baseP.y],
@@ -258,7 +248,7 @@
     });
 
     // 4. LEAVES OPTIMIZATION: Hybrid Canvas Architecture
-    const BASE_CLUSTERS = [
+    const CLUSTERS = [
       {cx: 720, cy: 220, rx: 450, ry: 210}, 
       {cx: 720, cy: 110, rx: 320, ry: 150},
       {cx: 480, cy: 160, rx: 280, ry: 160},
@@ -271,7 +261,7 @@
       {cx: 840, cy: 340, rx: 250, ry: 160}
     ];
 
-    BASE_CLUSTERS.forEach(cl => {
+    CLUSTERS.forEach(cl => {
       const numLeaves = 250 + Math.floor(R() * 100); 
       for(let i=0; i<numLeaves; i++) {
         const angle = R() * Math.PI * 2;
@@ -309,11 +299,7 @@
     });
 
     // 6. Setup Products in the Roots
-    const PRODUCTS = isMobileInit ? [
-      {id: 0, x: 530, y: 4000},
-      {id: 1, x: 720, y: 4150},
-      {id: 2, x: 910, y: 4300},
-    ] : [
+    const PRODUCTS = [
       {id: 0, x: 420, y: 2250},
       {id: 1, x: 720, y: 2250},
       {id: 2, x: 1020, y: 2250},
@@ -415,14 +401,15 @@
     const isMobile = innerWidth <= 760;
     const vWidth = isMobile ? 850 : 1440;
     const scale = innerWidth / vWidth;
-    const maxCamY = Math.max(0, 2500 - innerHeight / scale);
+    const minCamY = isMobile ? -800 : 0;
+    const maxCamY = Math.max(minCamY, 2500 - innerHeight / scale);
     
     const p = S.visProgress;
     const c = p < 0.25 ? 0 
             : p < 0.85 ? smoothstep((p-0.25)/0.60) 
             : 1;
             
-    S.targetCamY = c * maxCamY;
+    S.targetCamY = minCamY + c * (maxCamY - minCamY);
     S.camY = lerp(S.camY, S.targetCamY, 1 - Math.exp(-dt * 10));
 
     // Align SVG coordinate space
@@ -439,6 +426,7 @@
 
     // RENDER LEAVES ON CANVAS
     const dpr = Math.min(devicePixelRatio || 1, 2);
+    leafCtx.setTransform(1, 0, 0, 1, 0, 0); // FIX: Reset transform before clearRect
     leafCtx.clearRect(0, 0, L.leafCanvas.width, L.leafCanvas.height);
     
     leafCtx.setTransform(dpr * scale, 0, 0, dpr * scale, -viewBoxX * scale * dpr, -S.camY * scale * dpr);
