@@ -226,12 +226,9 @@
     }
 
     // 3.5 About Us Branches (Quem Somos)
-    const aboutBranches = isMobileInit ? [
-      { id: 'about-right', p: [[710, 2400], [770, 2380], [820, 2430], [850, 2480]], s: 0.20, e: 0.35, dir: 1 },
-      { id: 'about-left', p: [[725, 2100], [680, 2080], [630, 2030], [590, 1980]], s: 0.25, e: 0.40, dir: -1 }
-    ] : [
-      { id: 'about-right', p: [[710, 1100], [800, 1080], [920, 1050], [1050, 1020]], s: 0.20, e: 0.35, dir: 1 },
-      { id: 'about-left', p: [[725, 950], [650, 930], [550, 900], [400, 850]], s: 0.25, e: 0.40, dir: -1 }
+    const aboutBranches = [
+      { id: 'about-right', p: [[710, 1100], [800, 1080], [920, 1050], [isMobileInit ? 990 : 1050, 1020]], s: 0.20, e: 0.35, dir: 1 },
+      { id: 'about-left', p: [[725, 950], [650, 930], [550, 900], [isMobileInit ? 450 : 400, 850]], s: 0.25, e: 0.40, dir: -1 }
     ];
     aboutBranches.forEach(ab => {
       const basePts = getCurvePoints(ab.p, 20);
@@ -261,24 +258,15 @@
     });
 
     // 4. LEAVES OPTIMIZATION: Hybrid Canvas Architecture
-    const BASE_CLUSTERS = isMobileInit ? [
-      {cx: 720, cy: 300, rx: 250, ry: 210},
-      {cx: 720, cy: 500, rx: 180, ry: 150},
-      {cx: 600, cy: 700, rx: 180, ry: 160},
-      {cx: 840, cy: 700, rx: 180, ry: 160},
-      {cx: 600, cy: 900, rx: 180, ry: 180},
-      {cx: 840, cy: 900, rx: 180, ry: 180},
-      {cx: 550, cy: 1100, rx: 150, ry: 140},
-      {cx: 890, cy: 1100, rx: 150, ry: 140}
-    ] : [
+    const BASE_CLUSTERS = [
       {cx: 720, cy: 220, rx: 450, ry: 210}, 
       {cx: 720, cy: 110, rx: 320, ry: 150},
       {cx: 480, cy: 160, rx: 280, ry: 160},
       {cx: 960, cy: 160, rx: 280, ry: 160},
-      {cx: 320, cy: 280, rx: 280, ry: 180},
-      {cx: 1120, cy: 280, rx: 280, ry: 180},
-      {cx: 140, cy: 380, rx: 190, ry: 140},
-      {cx: 1300, cy: 380, rx: 190, ry: 140},
+      {cx: isMobileInit ? 450 : 320, cy: 280, rx: 280, ry: 180},
+      {cx: isMobileInit ? 990 : 1120, cy: 280, rx: 280, ry: 180},
+      {cx: isMobileInit ? 350 : 140, cy: 380, rx: 190, ry: 140},
+      {cx: isMobileInit ? 1090 : 1300, cy: 380, rx: 190, ry: 140},
       {cx: 600, cy: 340, rx: 250, ry: 160},
       {cx: 840, cy: 340, rx: 250, ry: 160}
     ];
@@ -304,14 +292,10 @@
     });
 
     // 5. Setup Balloons in the Canopy
-    const balloonCoords = isMobileInit ? [
-      { id: 0, x: 550, y: 400 },
-      { id: 1, x: 890, y: 750 },
-      { id: 2, x: 550, y: 1100 },
-    ] : [
-      { id: 0, x: 280, y: 380 },
+    const balloonCoords = [
+      { id: 0, x: isMobileInit ? 380 : 280, y: isMobileInit ? 450 : 380 },
       { id: 1, x: 720, y: 150 },
-      { id: 2, x: 1160, y: 380 },
+      { id: 2, x: isMobileInit ? 1060 : 1160, y: isMobileInit ? 450 : 380 },
     ];
     balloonCoords.forEach(b => {
       if (L.htmlBalloonWrappers[b.id]) {
@@ -429,9 +413,9 @@
     S.visProgress = lerp(S.visProgress, S.rawProg, 1 - Math.exp(-dt * 14));
 
     const isMobile = innerWidth <= 760;
-    const vWidth = isMobile ? 800 : 1440;
+    const vWidth = isMobile ? 850 : 1440;
     const scale = innerWidth / vWidth;
-    const maxCamY = Math.max(0, (isMobile ? 4500 : 2500) - innerHeight / scale);
+    const maxCamY = Math.max(0, 2500 - innerHeight / scale);
     
     const p = S.visProgress;
     const c = p < 0.25 ? 0 
