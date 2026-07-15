@@ -22,6 +22,7 @@ Depois acesse `http://localhost:8080`.
 - barra discreta de progresso da jornada;
 - jornada iniciada somente pelo CTA, com percurso automático lento que termina nas raízes e pode ser cancelado por qualquer interação;
 - enquadramento mobile das raízes com área de contemplação antes da seção de contato;
+- curva de câmera responsiva, sem trecho morto longo entre a copa e os galhos;
 - indicação de seção atual com `aria-current`;
 - pausa do ciclo de renderização quando a aba fica oculta;
 - proteção `noopener noreferrer` em links externos;
