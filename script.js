@@ -27,16 +27,24 @@
     return el;
   };
 
+  const motionMedia = matchMedia("(prefers-reduced-motion:reduce)");
+  const savedMotionPreference = (() => {
+    try { return localStorage.getItem("demeter-motion"); }
+    catch { return null; }
+  })();
+  let hasExplicitMotionPreference = savedMotionPreference !== null;
+
     const S = {
     rawProg: 0, visProgress: 0,
     camY: 0, targetCamY: 0,
     treeProg: 0,
     lastT: performance.now(),
-    reducedMotion: matchMedia("(prefers-reduced-motion:reduce)").matches,
+    reducedMotion: savedMotionPreference === "reduced" || (savedMotionPreference === null && motionMedia.matches),
   };
 
   const Journey = {
     state: 'hero',
+    autoStartTimer: 0,
     bloomStartT: 0,
     bloomDur: 6000, 
     scrollStartT: 0,
@@ -44,6 +52,8 @@
     scrollFrom: 0,
     scrollTo: 0,
   };
+  const autoplayEnabled = new URLSearchParams(location.search).get("autoplay") !== "0";
+  const AUTO_START_DELAY = 2400;
 
   const L = {
     heroCanvas: qs("#heroCanvas"),
@@ -64,7 +74,34 @@
     restartBtn: qs("#restartBottom"),
     canopyAura: qs("#canopyAura"),
     enterBtn: qs("#enterBtn"),
+    journeyProgress: qs("#journeyProgress"),
+    motionToggle: qs("#motionToggle"),
+    navToggle: qs("#navToggle"),
+    primaryNav: qs("#primaryNav"),
   };
+
+  function applyMotionPreference(reduced, persist = false) {
+    S.reducedMotion = reduced;
+    document.documentElement.classList.toggle("is-reduced-motion", reduced);
+    L.motionToggle?.setAttribute("aria-pressed", String(reduced));
+    L.motionToggle?.setAttribute("aria-label", reduced ? "Restaurar animações" : "Reduzir animações");
+    if (L.motionToggle) L.motionToggle.textContent = reduced ? "MOVIMENTO REDUZIDO" : "MOVIMENTO";
+    if (persist) {
+      hasExplicitMotionPreference = true;
+      try { localStorage.setItem("demeter-motion", reduced ? "reduced" : "full"); }
+      catch { /* Preferência continua válida apenas nesta sessão. */ }
+    }
+  }
+
+  function setMenu(open) {
+    L.primaryNav?.classList.toggle("is-open", open);
+    L.navToggle?.setAttribute("aria-expanded", String(open));
+    const label = L.navToggle?.querySelector(".sr-only");
+    if (label) label.textContent = open ? "Fechar menu" : "Abrir menu";
+    document.body.classList.toggle("nav-open", open);
+  }
+
+  applyMotionPreference(S.reducedMotion);
 
   const heroCtx = L.heroCanvas.getContext('2d', { alpha: true });
   const leafCtx = L.leafCanvas.getContext('2d', { alpha: true });
@@ -311,8 +348,18 @@
     });
   }
 
-    function startJourney() {
+  function startJourney() {
     if (Journey.state !== 'hero') return;
+    clearTimeout(Journey.autoStartTimer);
+    Journey.autoStartTimer = 0;
+
+    if (S.reducedMotion) {
+      Journey.state = 'done';
+      Journey.bloomStartT = performance.now() - Journey.bloomDur;
+      S.treeProg = 1;
+      window.scrollTo({ top: L.growth.offsetTop, behavior: 'auto' });
+      return;
+    }
     
     Journey.state = 'blooming';
     Journey.bloomStartT = performance.now();
@@ -329,6 +376,19 @@
         L.autoHint.classList.remove("is-hidden");
       }
     }, Journey.bloomDur + 500);
+  }
+
+  function scheduleAutoStart() {
+    if (!autoplayEnabled || S.reducedMotion || location.hash || scrollY >= 8 || Journey.state !== 'hero') return;
+    clearTimeout(Journey.autoStartTimer);
+    Journey.autoStartTimer = setTimeout(() => {
+      Journey.autoStartTimer = 0;
+      if (document.hidden) {
+        scheduleAutoStart();
+        return;
+      }
+      startJourney();
+    }, AUTO_START_DELAY);
   }
 
   function restartJourney() {
@@ -350,7 +410,14 @@
     L.leafCanvas.height = innerHeight * dpr;
   }
 
+  let frameRequest = 0;
+  let hiddenAt = 0;
+  const queueFrame = () => {
+    if (!document.hidden && !frameRequest) frameRequest = requestAnimationFrame(frame);
+  };
+
   function frame(now) {
+    frameRequest = 0;
     const dt = clamp((now - S.lastT) / 1000, 0.001, 0.05);
     S.lastT = now;
     const nowSec = now / 1000;
@@ -387,6 +454,8 @@
     const maxCamY = Math.max(minCamY, 2500 - innerHeight / scale);
     
     const p = S.visProgress;
+    const pageProgress = clamp(scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight));
+    if (L.journeyProgress) L.journeyProgress.style.transform = `scaleX(${pageProgress.toFixed(4)})`;
     const c = p < 0.25 ? 0 
             : p < 0.85 ? smoothstep((p-0.25)/0.60) 
             : 1;
@@ -480,8 +549,12 @@
 
     const st = p>=0.88 ? "PRODUTOS" : p>=0.65 ? "TECNOLOGIA" : p>=0.30 ? "QUEM SOMOS" : "INÍCIO";
     if (L.stageName.textContent !== st) L.stageName.textContent = st;
-    document.querySelectorAll(".nav a").forEach(a => 
-      a.classList.toggle("is-active", a.textContent.trim().toUpperCase() === st));
+    document.querySelectorAll(".nav a").forEach(a => {
+      const isActive = a.textContent.trim().toUpperCase() === st;
+      a.classList.toggle("is-active", isActive);
+      if (isActive) a.setAttribute("aria-current", "page");
+      else a.removeAttribute("aria-current");
+    });
     L.replayBtn.hidden = p < 0.96;
     const hw = L.heroCanvas.width / dpr;
     const hh = L.heroCanvas.height / dpr;
@@ -495,11 +568,13 @@
       heroCtx.beginPath(); heroCtx.arc(px, py, rad, 0, Math.PI*2); heroCtx.fill();
     }
 
-    requestAnimationFrame(frame);
+    queueFrame();
   }
 
     const STOP = () => {
-    if(Journey.state === 'scrolling') {
+    clearTimeout(Journey.autoStartTimer);
+    Journey.autoStartTimer = 0;
+    if(Journey.state === 'blooming' || Journey.state === 'scrolling') {
       Journey.state = 'done';
       document.documentElement.classList.remove("is-autoplay");
       L.autoHint.classList.add("is-hidden");
@@ -519,12 +594,49 @@
     else restartJourney();
   });
 
-    addEventListener("resize", resize);
+  L.motionToggle?.addEventListener("click", () => {
+    applyMotionPreference(!S.reducedMotion, true);
+    if (S.reducedMotion) STOP();
+  });
+  L.navToggle?.addEventListener("click", () => {
+    setMenu(L.navToggle.getAttribute("aria-expanded") !== "true");
+  });
+  L.primaryNav?.addEventListener("click", (event) => {
+    if (event.target.closest("a")) setMenu(false);
+  });
+  addEventListener("keydown", (event) => {
+    if (event.key === "Escape") setMenu(false);
+  });
+  motionMedia.addEventListener?.("change", (event) => {
+    if (!hasExplicitMotionPreference) applyMotionPreference(event.matches);
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      hiddenAt = performance.now();
+      cancelAnimationFrame(frameRequest);
+      frameRequest = 0;
+      return;
+    }
+    const pausedFor = hiddenAt ? performance.now() - hiddenAt : 0;
+    if (Journey.bloomStartT) Journey.bloomStartT += pausedFor;
+    if (Journey.scrollStartT) Journey.scrollStartT += pausedFor;
+    S.lastT = performance.now();
+    hiddenAt = 0;
+    queueFrame();
+  });
+
+    addEventListener("resize", () => {
+      resize();
+      if (innerWidth > 760) setMenu(false);
+    });
   resize();
   generateTree(); 
-  requestAnimationFrame(frame);
+  queueFrame();
 
   window.addEventListener("load", () => {
-    if (!location.hash && scrollY < 8) window.scrollTo(0, 0);
+    if (!location.hash && scrollY < 8) {
+      window.scrollTo(0, 0);
+      scheduleAutoStart();
+    }
   }, {once: true});
 })();
