@@ -200,12 +200,12 @@ button, a { font: inherit; }
   animation: hintPulse 1.9s ease-in-out infinite; flex-shrink: 0;
 }
 
-.growth { position: relative; height: 480vh; background: var(--bg); }
+.growth { position: relative; height: 520vh; background: var(--bg); }
 .anchor { position: absolute; left:0; width:1px; height:1px; pointer-events:none; }
 #copa     { top: 0; }
 #tronco   { top: 36%; }
 #raizes   { top: 68%; }
-#produtos { top: 91%; }
+#produtos { top: 74%; }
 
 .scene {
   position: sticky; top: 0;
@@ -467,7 +467,7 @@ button, a { font: inherit; }
   body.nav-open { overflow:hidden; }
   .hero-copy { width:calc(100% - 32px); }
   .hero h1 { font-size:clamp(40px,13vw,64px); }
-  .growth { height:540vh; }
+  .growth { height:600vh; }
   .closing-pillars { flex-direction:column; gap:1px; }
   .pillar+.pillar { border-left:0; border-top:1px solid rgba(127,245,176,.09); }
   
