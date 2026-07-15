@@ -401,7 +401,7 @@
     const isMobile = innerWidth <= 760;
     const vWidth = isMobile ? 850 : 1440;
     const scale = innerWidth / vWidth;
-    const minCamY = isMobile ? -800 : 0;
+    const minCamY = isMobile ? -150 : 0;
     const maxCamY = Math.max(minCamY, 2500 - innerHeight / scale);
     
     const p = S.visProgress;
