@@ -21,6 +21,7 @@ Depois acesse `http://localhost:8080`.
 - comportamento adequado para `prefers-reduced-motion` e `prefers-contrast`;
 - barra discreta de progresso da jornada;
 - autoplay iniciado após 2,4 segundos, cancelável por qualquer interação e desativável com `?autoplay=0`;
+- enquadramento mobile das raízes com área de contemplação antes da seção de contato;
 - indicação de seção atual com `aria-current`;
 - pausa do ciclo de renderização quando a aba fica oculta;
 - proteção `noopener noreferrer` em links externos;
