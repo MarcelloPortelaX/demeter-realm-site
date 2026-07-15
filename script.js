@@ -3,8 +3,7 @@
 
   if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 
-  /* ─── UTILITIES ─────────────────────────────────────────── */
-  const qs = (s, r = document) => r.querySelector(s);
+    const qs = (s, r = document) => r.querySelector(s);
   const qsa = (s, r = document) => Array.from(r.querySelectorAll(s));
   const clamp = (v, lo = 0, hi = 1) => Math.min(hi, Math.max(lo, v));
   const lerp = (a, b, t) => a + (b - a) * t;
@@ -28,8 +27,7 @@
     return el;
   };
 
-  /* ─── STATE ─────────────────────────────────────────────── */
-  const S = {
+    const S = {
     rawProg: 0, visProgress: 0,
     camY: 0, targetCamY: 0,
     treeProg: 0,
@@ -72,8 +70,7 @@
   const leafCtx = L.leafCanvas.getContext('2d', { alpha: true });
   const LEAF_PATH = new Path2D("M 0,0 Q 15,-25 40,-15 Q 20,10 0,0 Z");
 
-  /* ─── PROCEDURAL GENERATION ENGINE ──────────────────────── */
-  const BARK_COLORS = ["rgba(40,18,5,0.9)", "rgba(55,25,8,0.85)", "rgba(75,35,12,0.8)", "rgba(30,12,3,0.95)", "rgba(65,30,10,0.8)"];
+    const BARK_COLORS = ["rgba(40,18,5,0.9)", "rgba(55,25,8,0.85)", "rgba(75,35,12,0.8)", "rgba(30,12,3,0.95)", "rgba(65,30,10,0.8)"];
   const LEAF_COLORS = ["rgba(60,255,160,0.25)", "rgba(54,210,174,0.25)", "rgba(68,232,140,0.25)", "rgba(93,255,171,0.25)", "rgba(42,235,128,0.25)"];
 
   const animatedPaths = [];
@@ -129,8 +126,6 @@
   function generateTree() {
     const isMobileInit = innerWidth <= 760;
     const R = mkRng(777);
-    
-    // 1. Trunk
     const TRUNK_PTS = [[706,1700], [731,1450], [710,1100], [729,750], [706,400], [720,100]];
     const trunkBase = getCurvePoints(TRUNK_PTS, 30);
     
@@ -148,8 +143,6 @@
       animatedPaths.push({ el: path, s: R()*0.05, e: 0.45 + R()*0.05 });
       L.trunk.appendChild(path);
     }
-
-    // 2. Roots
     const ROOT_DEFS = [
       {p: [[645, 1700], [580, 1850], [480, 2000], [420, 2250]], s: 0.0, e: 0.35, prod: 0},
       {p: [[706, 1700], [706, 1900], [715, 2100], [720, 2250]], s: 0.0, e: 0.35, prod: 1},
@@ -177,8 +170,6 @@
         L.roots.appendChild(path);
       }
     });
-
-    // 3. Branches
     for(let i=0; i<30; i++) {
       const tBranch = Math.pow(i / 29, 1.5); 
       const trunkT = 0.75 + 0.25 * tBranch;
@@ -214,8 +205,6 @@
         else L.branchesBack.appendChild(path);
       }
     }
-
-    // 3.5 About Us Branches (Quem Somos)
     const aboutBranches = [
       { id: 'about-right', p: [[710, 1100], [800, 1080], [920, 1050], [isMobileInit ? 990 : 1050, 1020]], s: 0.20, e: 0.35, dir: 1 },
       { id: 'about-left', p: [[725, 950], [650, 930], [550, 900], [isMobileInit ? 450 : 400, 850]], s: 0.25, e: 0.40, dir: -1 }
@@ -246,8 +235,6 @@
          });
       }
     });
-
-    // 4. LEAVES OPTIMIZATION: Hybrid Canvas Architecture
     const CLUSTERS = [
       {cx: 720, cy: 220, rx: 450, ry: 210}, 
       {cx: 720, cy: 110, rx: 320, ry: 150},
@@ -280,8 +267,6 @@
         });
       }
     });
-
-    // 5. Setup Balloons in the Canopy
     const balloonCoords = [
       { id: 0, x: isMobileInit ? 380 : 280, y: isMobileInit ? 450 : 380 },
       { id: 1, x: 720, y: 150 },
@@ -297,8 +282,6 @@
         });
       }
     });
-
-    // 6. Setup Products in the Roots
     const PRODUCTS = [
       {id: 0, x: 420, y: 2250},
       {id: 1, x: 720, y: 2250},
@@ -328,8 +311,7 @@
     });
   }
 
-  /* ─── CHOREOGRAPHY & MAIN LOOP ──────────────────────────── */
-  function startJourney() {
+    function startJourney() {
     if (Journey.state !== 'hero') return;
     
     Journey.state = 'blooming';
@@ -411,20 +393,14 @@
             
     S.targetCamY = minCamY + c * (maxCamY - minCamY);
     S.camY = lerp(S.camY, S.targetCamY, 1 - Math.exp(-dt * 10));
-
-    // Align SVG coordinate space
     const viewBoxX = 720 - (innerWidth / scale) / 2;
     L.treeSvg.setAttribute("viewBox", `${viewBoxX} ${S.camY} ${innerWidth / scale} ${innerHeight / scale}`);
-
-    // Update SVG Paths
     animatedPaths.forEach(path => {
       const localProg = clamp((S.treeProg - path.s) / (path.e - path.s));
       if (path.len) {
         path.el.style.strokeDashoffset = path.len * (1 - localProg);
       }
     });
-
-    // RENDER LEAVES ON CANVAS
     const dpr = Math.min(devicePixelRatio || 1, 2);
     leafCtx.setTransform(1, 0, 0, 1, 0, 0); // FIX: Reset transform before clearRect
     leafCtx.clearRect(0, 0, L.leafCanvas.width, L.leafCanvas.height);
@@ -453,8 +429,6 @@
     }
 
     L.canopyAura.setAttribute("opacity", (clamp(S.treeProg / 0.6) * 1).toFixed(2));
-
-    // About Balloons (Quem Somos)
     animatedAboutBalloons.forEach(b => {
       const localProg = clamp((S.treeProg - b.s) / 0.05);
       const isVis = localProg > 0.01;
@@ -470,8 +444,6 @@
         b.el.style.transform = `translate(${screenX}px, ${screenY}px) translate(-50%, -50%)`;
       }
     });
-
-    // Canopy Balloons
     animatedBalloons.forEach(b => {
       const localProg = clamp((S.treeProg - b.s) / 0.05);
       const isVis = localProg > 0.01;
@@ -487,8 +459,6 @@
         b.el.style.transform = `translate(${screenX}px, ${screenY}px) translate(-50%, -50%)`;
       }
     });
-
-    // Roots Products
     animatedProducts.forEach(prod => {
       const localProg = clamp((S.visProgress - prod.s) / 0.05);
       const isVis = localProg > 0.01;
@@ -513,8 +483,6 @@
     document.querySelectorAll(".nav a").forEach(a => 
       a.classList.toggle("is-active", a.textContent.trim().toUpperCase() === st));
     L.replayBtn.hidden = p < 0.96;
-
-    // HERO BACKGROUND PARTICLES
     const hw = L.heroCanvas.width / dpr;
     const hh = L.heroCanvas.height / dpr;
     heroCtx.clearRect(0, 0, hw, hh);
@@ -530,8 +498,7 @@
     requestAnimationFrame(frame);
   }
 
-  /* ─── EVENT LISTENERS ───────────────────────────────────── */
-  const STOP = () => {
+    const STOP = () => {
     if(Journey.state === 'scrolling') {
       Journey.state = 'done';
       document.documentElement.classList.remove("is-autoplay");
@@ -552,8 +519,7 @@
     else restartJourney();
   });
 
-  /* ─── INIT ──────────────────────────────────────────────── */
-  addEventListener("resize", resize);
+    addEventListener("resize", resize);
   resize();
   generateTree(); 
   requestAnimationFrame(frame);
