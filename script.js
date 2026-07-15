@@ -444,9 +444,10 @@
     const p = S.visProgress;
     const pageProgress = clamp(scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight));
     if (L.journeyProgress) L.journeyProgress.style.transform = `scaleX(${pageProgress.toFixed(4)})`;
-    const c = p < 0.25 ? 0 
-            : p < 0.85 ? smoothstep((p-0.25)/0.60) 
-            : 1;
+    const cameraStart = isMobile ? 0.08 : 0.04;
+    const cameraEnd = isMobile ? 0.78 : 0.72;
+    const cameraT = clamp((p - cameraStart) / (cameraEnd - cameraStart));
+    const c = 1 - Math.pow(1 - cameraT, 1.65);
             
     S.targetCamY = minCamY + c * (maxCamY - minCamY);
     S.camY = lerp(S.camY, S.targetCamY, 1 - Math.exp(-dt * 10));
