@@ -44,21 +44,19 @@
 
   const Journey = {
     state: 'hero',
-    autoStartTimer: 0,
     bloomStartT: 0,
     bloomDur: 6000, 
     scrollStartT: 0,
-    scrollDur: 28000,
+    scrollDur: 34000,
     scrollFrom: 0,
     scrollTo: 0,
   };
-  const autoplayEnabled = new URLSearchParams(location.search).get("autoplay") !== "0";
-  const AUTO_START_DELAY = 2400;
 
   const L = {
     heroCanvas: qs("#heroCanvas"),
     leafCanvas: qs("#leafCanvas"),
     growth: qs("#floresta"),
+    productsAnchor: qs("#produtos"),
     treeSvg: qs("#treeSvg"),
     trunk: qs("#trunk"),
     roots: qs("#roots"),
@@ -350,14 +348,12 @@
 
   function startJourney() {
     if (Journey.state !== 'hero') return;
-    clearTimeout(Journey.autoStartTimer);
-    Journey.autoStartTimer = 0;
 
     if (S.reducedMotion) {
       Journey.state = 'done';
       Journey.bloomStartT = performance.now() - Journey.bloomDur;
       S.treeProg = 1;
-      window.scrollTo({ top: L.growth.offsetTop, behavior: 'auto' });
+      window.scrollTo({ top: getJourneyTarget(), behavior: 'auto' });
       return;
     }
     
@@ -378,17 +374,10 @@
     }, Journey.bloomDur + 500);
   }
 
-  function scheduleAutoStart() {
-    if (!autoplayEnabled || S.reducedMotion || location.hash || scrollY >= 8 || Journey.state !== 'hero') return;
-    clearTimeout(Journey.autoStartTimer);
-    Journey.autoStartTimer = setTimeout(() => {
-      Journey.autoStartTimer = 0;
-      if (document.hidden) {
-        scheduleAutoStart();
-        return;
-      }
-      startJourney();
-    }, AUTO_START_DELAY);
+  function getJourneyTarget() {
+    const productsTop = L.growth.offsetTop + L.productsAnchor.offsetTop;
+    const stickyEnd = L.growth.offsetTop + L.growth.offsetHeight - innerHeight - 1;
+    return Math.min(productsTop, stickyEnd);
   }
 
   function restartJourney() {
@@ -396,7 +385,6 @@
     document.documentElement.classList.remove("is-autoplay");
     window.scrollTo({ top: 0, behavior: 'auto' });
     S.treeProg = 0; S.visProgress = 0; S.rawProg = 0; S.camY = 0;
-    setTimeout(() => startJourney(), 300);
   }
 
   function resize() {
@@ -432,7 +420,7 @@
     }
 
     if (Journey.state === 'scrolling') {
-      Journey.scrollTo = document.documentElement.scrollHeight - innerHeight;
+      Journey.scrollTo = getJourneyTarget();
       const t = clamp((now - Journey.scrollStartT) / Journey.scrollDur);
       const eased = easeInOut3(t);
       window.scrollTo(0, lerp(Journey.scrollFrom, Journey.scrollTo, eased));
@@ -555,7 +543,7 @@
       if (isActive) a.setAttribute("aria-current", "page");
       else a.removeAttribute("aria-current");
     });
-    L.replayBtn.hidden = p < 0.96;
+    L.replayBtn.hidden = p < 0.86;
     const hw = L.heroCanvas.width / dpr;
     const hh = L.heroCanvas.height / dpr;
     heroCtx.clearRect(0, 0, hw, hh);
@@ -572,8 +560,6 @@
   }
 
     const STOP = () => {
-    clearTimeout(Journey.autoStartTimer);
-    Journey.autoStartTimer = 0;
     if(Journey.state === 'blooming' || Journey.state === 'scrolling') {
       Journey.state = 'done';
       document.documentElement.classList.remove("is-autoplay");
@@ -636,7 +622,6 @@
   window.addEventListener("load", () => {
     if (!location.hash && scrollY < 8) {
       window.scrollTo(0, 0);
-      scheduleAutoStart();
     }
   }, {once: true});
 })();
