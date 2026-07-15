@@ -3,19 +3,37 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0"/>
+  <meta name="description" content="Demeter Realm: tecnologia avançada para inventário, análise espacial e gestão florestal." />
+  <meta name="theme-color" content="#020604" />
+  <meta name="color-scheme" content="dark" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Demeter Realm | Inteligência Territorial" />
+  <meta property="og:description" content="Tecnologia avançada para inventário e gestão florestal." />
+  <meta name="twitter:card" content="summary" />
   <title>Demeter Realm | Inteligência Territorial</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Outfit:wght@200;300;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=7" />
+  <link rel="stylesheet" href="styles.css?v=8" />
 </head>
 <body>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div class="journey-progress" aria-hidden="true"><span id="journeyProgress"></span></div>
   <header class="site-header">
-    <a href="#" class="brand">
-      <div class="brand-seed"></div>
+    <a href="#hero" class="brand" aria-label="Demeter Realm — início">
+      <span class="brand-seed" aria-hidden="true"></span>
       DEMETER REALM
     </a>
-    <nav class="nav">
+    <div class="header-actions">
+      <button class="motion-toggle" id="motionToggle" type="button" aria-pressed="false" aria-label="Reduzir animações">MOVIMENTO</button>
+      <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="primaryNav">
+        <span class="sr-only">Abrir menu</span>
+        <span aria-hidden="true"></span><span aria-hidden="true"></span>
+      </button>
+    </div>
+    <nav class="nav" id="primaryNav" aria-label="Navegação principal">
       <a href="#copa" class="is-active">INÍCIO</a>
       <a href="#tronco">QUEM SOMOS</a>
       <a href="#raizes">TECNOLOGIA</a>
@@ -24,9 +42,9 @@
     </nav>
   </header>
 
-  <main>
+  <main id="conteudo">
     <section class="hero" id="hero">
-      <canvas id="heroCanvas" class="hero-canvas"></canvas>
+      <canvas id="heroCanvas" class="hero-canvas" aria-hidden="true"></canvas>
       <div class="hero-aura"></div>
       <div class="hero-grid"></div>
       <div class="hero-copy">
@@ -50,7 +68,7 @@
 
       <div class="scene" id="scene">
         
-                <svg id="treeSvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 2500" preserveAspectRatio="xMidYMin slice">
+                <svg id="treeSvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 2500" preserveAspectRatio="xMidYMin slice" aria-hidden="true" focusable="false">
           <defs>
             <radialGradient id="mistGrad">
               <stop offset="0%" stop-color="rgba(101,249,162,0.06)"/>
@@ -67,7 +85,7 @@
           <g id="products"></g>
         </svg>
 
-                <canvas id="leafCanvas"></canvas>
+                <canvas id="leafCanvas" aria-hidden="true"></canvas>
 
                 <div class="html-products" id="htmlAboutBalloons">
           <div class="html-balloon-wrapper" id="about-left">
@@ -107,26 +125,26 @@
 
                 <div class="html-products" id="htmlProducts">
           <div class="html-product-wrapper">
-            <a href="#" class="html-product">
+            <div class="html-product" role="group" aria-label="DemeterKit — produto em desenvolvimento">
               <div class="html-product-title">DEMETERKIT</div>
               <div class="html-product-sub">Simulador Unreal EdTech</div>
-            </a>
+            </div>
           </div>
           <div class="html-product-wrapper">
-            <a href="#" class="html-product">
+            <div class="html-product" role="group" aria-label="Dashboard — produto em desenvolvimento">
               <div class="html-product-title">DASHBOARD</div>
               <div class="html-product-sub">Inventário Florestal</div>
-            </a>
+            </div>
           </div>
           <div class="html-product-wrapper">
-            <a href="#" class="html-product">
+            <div class="html-product" role="group" aria-label="GIS — produto em desenvolvimento">
               <div class="html-product-title">GIS</div>
               <div class="html-product-sub">Software de Análise</div>
-            </a>
+            </div>
           </div>
         </div>
 
-        <div class="stage-label">
+        <div class="stage-label" aria-live="polite" aria-atomic="true">
           <span class="stage-label__dot"></span>
           <span id="stageName">INÍCIO</span>
         </div>
@@ -139,7 +157,7 @@
         <h2 class="closing-name">Demeter Realm</h2>
         <p class="closing-tagline">Onde a natureza encontra o algoritmo.</p>
         <div class="closing-pillars">
-          <a href="https://instagram.com/cell_portela" target="_blank" class="pillar" style="text-decoration: none;">
+          <a href="https://instagram.com/cell_portela" target="_blank" rel="noopener noreferrer" class="pillar" style="text-decoration: none;">
             <div class="pillar-orb"></div>
             <div class="pillar-title">INSTAGRAM</div>
             <div class="pillar-desc">@cell_portela</div>
@@ -149,7 +167,7 @@
             <div class="pillar-title">E-MAIL</div>
             <div class="pillar-desc" style="word-break: break-all;">marcello.santos1<br>@estudante.ufla.br</div>
           </a>
-          <a href="https://wa.me/5537991061056" target="_blank" class="pillar" style="text-decoration: none;">
+          <a href="https://wa.me/5537991061056" target="_blank" rel="noopener noreferrer" class="pillar" style="text-decoration: none;">
             <div class="pillar-orb"></div>
             <div class="pillar-title">TELEFONE</div>
             <div class="pillar-desc">(37) 99106-1056</div>
@@ -160,6 +178,7 @@
     </section>
   </main>
 
-  <script src="script.js?v=7"></script>
+  <noscript><p class="noscript-message">Ative o JavaScript para visualizar a experiência interativa da árvore Demeter Realm.</p></noscript>
+  <script src="script.js?v=8"></script>
 </body>
 </html>
