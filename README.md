@@ -23,6 +23,7 @@ Depois acesse `http://localhost:8080`.
 - jornada iniciada somente pelo CTA, com percurso automático lento que termina nas raízes e pode ser cancelado por qualquer interação;
 - enquadramento mobile das raízes com área de contemplação antes da seção de contato;
 - curva de câmera responsiva, sem trecho morto longo entre a copa e os galhos;
+- identidade visual oficial aplicada ao cabeçalho, favicon, tela inicial, compartilhamento social e encerramento;
 - indicação de seção atual com `aria-current`;
 - pausa do ciclo de renderização quando a aba fica oculta;
 - proteção `noopener noreferrer` em links externos;
@@ -40,6 +41,7 @@ Depois acesse `http://localhost:8080`.
 
 - `index.html` — estrutura e metadados;
 - `favicon.svg` — ícone vetorial inspirado na semente da marca;
+- `brand-mark.png` — identidade oficial da marca, preservada sem alterações;
 - `styles.css` — identidade visual, responsividade e acessibilidade;
 - `script.js` — árvore procedural, jornada e controles da V2;
 - `script_pc_pure.js` — variante de referência preservada da origem.
