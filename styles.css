@@ -75,13 +75,13 @@ button, a { font: inherit; }
   font-size: 11px; font-weight: 600; letter-spacing: .24em;
   color: var(--ink);
 }
-.brand-seed {
-  width: 13px; height: 22px;
-  border: 1px solid rgba(211,255,226,.72);
-  border-radius: 90% 12% 90% 12%;
-  transform: rotate(-34deg);
-  background: linear-gradient(135deg,rgba(232,255,239,.92),rgba(56,220,124,.18));
-  box-shadow: 0 0 22px rgba(93,249,156,.55);
+.brand-mark {
+  width:30px; height:30px; display:grid; place-items:center; overflow:hidden;
+  border-radius:50%; flex-shrink:0; background:#010805;
+  box-shadow:0 0 20px rgba(71,255,142,.24);
+}
+.brand-mark img {
+  width:48px; height:48px; object-fit:cover; transform:scale(1.25);
 }
 .nav { order:1; display: flex; align-items: center; gap: clamp(18px,2.8vw,42px); margin-left:auto; margin-right:clamp(10px,1.7vw,26px); }
 .nav a {
@@ -355,6 +355,14 @@ button, a { font: inherit; }
   max-width: 740px; width: calc(100% - 48px);
   text-align: center; padding: 72px 0;
 }
+.closing-brand-mark {
+  width:112px; height:112px; margin:0 auto 8px; overflow:hidden;
+  border-radius:34%; background:#010805;
+  filter:drop-shadow(0 0 24px rgba(70,255,142,.18));
+}
+.closing-brand-mark img {
+  width:100%; height:100%; object-fit:cover; transform:scale(1.14);
+}
 .closing-name {
   margin: 0 0 14px; font-family: var(--font-d);
   font-size: clamp(46px,7.2vw,94px); font-weight: 220; letter-spacing: -.04em;
@@ -441,6 +449,8 @@ button, a { font: inherit; }
 @media (max-width:760px) {
   :root { --header-h:60px; }
   .site-header { padding:0 18px; }
+  .brand-mark { width:27px; height:27px; }
+  .brand-mark img { width:44px; height:44px; }
   .header-actions { margin-left:auto; }
   .motion-toggle { padding:7px 9px; font-size:7px; }
   .nav-toggle {
