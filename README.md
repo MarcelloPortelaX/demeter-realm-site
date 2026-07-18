@@ -41,7 +41,8 @@ Depois acesse `http://localhost:8080`.
 
 - `index.html` — estrutura e metadados;
 - `favicon.svg` — ícone vetorial inspirado na semente da marca;
-- `brand-mark.png` — identidade oficial da marca, preservada sem alterações;
+- `brand-mark.png` — identidade oficial em alta resolução, usada no encerramento e compartilhamento;
+- `brand-icon.png` — recorte otimizado da mesma marca para cabeçalho, favicon e atalhos mobile;
 - `styles.css` — identidade visual, responsividade e acessibilidade;
 - `script.js` — árvore procedural, jornada e controles da V2;
 - `script_pc_pure.js` — variante de referência preservada da origem.
